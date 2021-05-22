@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: php-dep
+spec:
+  selector:
+    matchLabels:
+      env: production
+
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        env: production
+
+    spec:
+      containers:
+      - name: php
+        image: vimal13/apache-webserver-php
+
+        ports:
+        - containerPort: 80
+
+        volumeMounts:
+          - name: httpd-vol
+            mountPath: /var/www/html/
+
+        volumeMounts:
+          - name: log-vol
+            mountPath: /var/log/httpd/
+
+      volumes:
+      - name: httpd-vol
+        persistentVolumeClaim:
+          claimName: web-pvc
+
+      volumes:
+      - name: log-vol
+        persistentVolumeClaim:
+          claimName: log-pvc

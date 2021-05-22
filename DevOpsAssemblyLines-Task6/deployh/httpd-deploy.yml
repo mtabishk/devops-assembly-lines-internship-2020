@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: httpd-dep
+spec:
+  selector:
+    matchLabels:
+      env: production
+
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        env: production
+
+    spec:
+      containers:
+      - name: httpd
+        image: httpd
+
+        ports:
+        - containerPort: 80
+
+        volumeMounts:
+          - name: httpd-vol
+            mountPath: /usr/local/apache2/htdocs/
+
+        volumeMounts:
+          - name: logs-vol
+            mountPath: /var/log/
+
+      volumes:
+      - name: httpd-vol
+        persistentVolumeClaim:
+          claimName: web-pvc
+
+      volumes:
+      - name: logs-vol
+        persistentVolumeClaim:
+          claimName: log-pvc
